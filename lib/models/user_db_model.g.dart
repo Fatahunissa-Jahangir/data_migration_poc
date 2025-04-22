@@ -17,13 +17,18 @@ const UserDBModelSchema = CollectionSchema(
   name: r'UserDBModel',
   id: 1552683287419585842,
   properties: {
-    r'location': PropertySchema(
+    r'count': PropertySchema(
       id: 0,
+      name: r'count',
+      type: IsarType.long,
+    ),
+    r'location': PropertySchema(
+      id: 1,
       name: r'location',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'name',
       type: IsarType.string,
     )
@@ -69,8 +74,9 @@ void _userDBModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.location);
-  writer.writeString(offsets[1], object.name);
+  writer.writeLong(offsets[0], object.count);
+  writer.writeString(offsets[1], object.location);
+  writer.writeString(offsets[2], object.name);
 }
 
 UserDBModel _userDBModelDeserialize(
@@ -80,8 +86,9 @@ UserDBModel _userDBModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = UserDBModel(
-    location: reader.readStringOrNull(offsets[0]),
-    name: reader.readStringOrNull(offsets[1]),
+    count: reader.readLongOrNull(offsets[0]),
+    location: reader.readStringOrNull(offsets[1]),
+    name: reader.readStringOrNull(offsets[2]),
   );
   object.id = id;
   return object;
@@ -95,8 +102,10 @@ P _userDBModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 1:
+      return (reader.readStringOrNull(offset)) as P;
+    case 2:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -196,6 +205,77 @@ extension UserDBModelQueryWhere
 
 extension UserDBModelQueryFilter
     on QueryBuilder<UserDBModel, UserDBModel, QFilterCondition> {
+  QueryBuilder<UserDBModel, UserDBModel, QAfterFilterCondition> countIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'count',
+      ));
+    });
+  }
+
+  QueryBuilder<UserDBModel, UserDBModel, QAfterFilterCondition>
+      countIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'count',
+      ));
+    });
+  }
+
+  QueryBuilder<UserDBModel, UserDBModel, QAfterFilterCondition> countEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'count',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserDBModel, UserDBModel, QAfterFilterCondition>
+      countGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'count',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserDBModel, UserDBModel, QAfterFilterCondition> countLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'count',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserDBModel, UserDBModel, QAfterFilterCondition> countBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'count',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<UserDBModel, UserDBModel, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -559,6 +639,18 @@ extension UserDBModelQueryLinks
 
 extension UserDBModelQuerySortBy
     on QueryBuilder<UserDBModel, UserDBModel, QSortBy> {
+  QueryBuilder<UserDBModel, UserDBModel, QAfterSortBy> sortByCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'count', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserDBModel, UserDBModel, QAfterSortBy> sortByCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'count', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserDBModel, UserDBModel, QAfterSortBy> sortByLocation() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'location', Sort.asc);
@@ -586,6 +678,18 @@ extension UserDBModelQuerySortBy
 
 extension UserDBModelQuerySortThenBy
     on QueryBuilder<UserDBModel, UserDBModel, QSortThenBy> {
+  QueryBuilder<UserDBModel, UserDBModel, QAfterSortBy> thenByCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'count', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserDBModel, UserDBModel, QAfterSortBy> thenByCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'count', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserDBModel, UserDBModel, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -625,6 +729,12 @@ extension UserDBModelQuerySortThenBy
 
 extension UserDBModelQueryWhereDistinct
     on QueryBuilder<UserDBModel, UserDBModel, QDistinct> {
+  QueryBuilder<UserDBModel, UserDBModel, QDistinct> distinctByCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'count');
+    });
+  }
+
   QueryBuilder<UserDBModel, UserDBModel, QDistinct> distinctByLocation(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -645,6 +755,12 @@ extension UserDBModelQueryProperty
   QueryBuilder<UserDBModel, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<UserDBModel, int?, QQueryOperations> countProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'count');
     });
   }
 

@@ -10,7 +10,8 @@ class UserDBModel {
 
   String? name;
   String? location;
+  int? count;
 
-  UserDBModel({this.name, this.location});
+  UserDBModel({this.name, this.location, this.count});
 
 }

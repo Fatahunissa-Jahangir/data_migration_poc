@@ -1,5 +1,6 @@
 import 'package:data_migration_poc/local_storage.dart';
-import 'package:data_migration_poc/migration_scripts/migation_V1.dart';
+import 'package:data_migration_poc/migration_scripts/migration_V1.dart';
+import 'package:data_migration_poc/migration_scripts/migration_V2.dart';
 import 'package:data_migration_poc/models/db_transaction/db_transaction_db_model.dart';
 import 'package:data_migration_poc/models/db_version/db_version_db_model.dart';
 import 'package:data_migration_poc/models/user_db_model.dart';
@@ -33,10 +34,12 @@ void main() async{
 
     Map<String, Future<void> Function()> functionMap = {
       'V1': () async => performMigrationV1(),
+      'V2': () async => performMigrationV2(),
     };
 
     final List<String> migrationSequence = [
       'V1',
+      'V2',
     ];
 
 
@@ -128,6 +131,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _saveData() async {
+    if(nameController.text.isEmpty || locationController.text.isEmpty) {
+      return;
+    }
     final user = UserDBModel(
       name: nameController.text,
       location: locationController.text,
@@ -135,6 +141,9 @@ class _MyHomePageState extends State<MyHomePage> {
     await LocalStorage.isar.writeTxn(() async {
       await LocalStorage.isar.userDBModels.put(user);
     });
+
+    nameController.clear();
+    locationController.clear();
   }
 
   @override
